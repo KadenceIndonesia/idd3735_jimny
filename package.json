@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon suzuki.js"
+    "start": "pm2 start suzuki.js --name 'dashboard_suzuki'",
+    "stop": "pm2 stop suzuki.js",
+    "restart": "pm2 restart suzuki.js"
   },
   "repository": {
     "type": "git",
