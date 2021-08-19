@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Dashboard</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="<%= baseurl() %>css/chart.css">
+	<style>
+		.canvasjs-chart-credit{
+			display: none;
+		}
+		table th{
+			position: sticky;
+			top: 0;
+			position: -webkit-sticky;
+			z-index: 99;
+		}
+		th.rotate {
+			/* Something you can count on */
+			width: 22px;
+			height: 270px;
+			white-space: nowrap;
+		}
+
+		th.rotate > div {
+			transform: 
+				/* Magic Numbers */
+				translate(-3px, 103px)
+				/* 45 is really 360 - 45 */
+				rotate(270deg);
+			width: 30px;
+		}
+		th.rotate > div > span {
+			border-bottom: 1px solid #ccc;
+			padding: 5px 0;
+			letter-spacing: .5px;
+		}
+		.square{
+			position: relative;
+			margin: auto;
+			width: 20px;
+			height: 20px !important;
+			margin: 3px 0;
+		}
+		.used{
+			background: #C6E48B;
+		}
+		.unused{
+			background: #e6e6e6;
+		}
+	</style>
+</head>
+<%- include ('./partials/header') %>
+<body>
+<div class="wrapper">
+	<div class="lSide">
+		<%- include ('./partials/sidebar') %>
+	</div>
+	<div class="rSide">
+		<div class="head gradientr desk">
+			<%- include ('./partials/topdesk') %>
+		</div>
+		<div class="mainbox size-std column" style="overflow: unset;">
+			<div class="title-content size-std">
+				Report
+			</div>
+			
+            
+            <div class="cols-12 containt" style="margin: 0; overflow: auto; overflow: unset;">
+                <div class="headtitle trans" style="margin-bottom: 0;">
+                    <p class="size-head4 nopad">Control</p>
+                </div>
+            </div>
+            <div class="full-length" style="position: relative;">
+                <div class="loader" style="display: none;">
+                    <span class="loader-helper"></span><img src="<%= baseurl() %>images/icon/loader.gif" alt="">
+                </div>
+            </div>
+            <div class="top-info column">
+                <!-- <div class="containt top-info-box shadow half delay" style="background: red">
+					<a href="<%= baseurl() %>?panel=consumer">
+						<div class="field-info">
+							<p class="nopad size-head4"><b>RMX</b></p>
+							<p class="size-head1 nopad">100</p>
+							<p class="size-std nopad"></p>
+						</div>
+					</a>
+                </div> -->
+            </div>
+            <div class="cols-12 containt" style="margin: 20px 0;">
+				<div class="headtitle trans" style="margin-bottom: 0;">
+					<p class="size-head4 nopad">&nbsp;</p>
+					<p class="size-std nopad">&nbsp;</p>
+					<ul class="tab-image-setting nopad">
+						<li><img src="<%= baseurl() %>images/icon/arrow-up.png" class="btn-tab-toggle delay" href="chartContainer"></li>
+					</ul>
+                </div>
+                <div style="width: 100%; height: 600px;" class="chartContainer"  id="chartContainer">
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<%- include ('./partials/footer') %>
+<script type="text/javascript" src="<%= baseurl() %>js/jquery-3.4.1.min.js"></script>
+<script src="<%= baseurl() %>js/jquery.canvasjs.min.js"></script>
+</html>

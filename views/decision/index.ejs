@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Decision Journey</title>
+    <link rel = "icon" href = "https://kadence.com/wp-content/uploads/2020/07/260x260.png" type = "image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="<%= baseurl() %>plugin/flexmonster/theme/green/flexmonster.css"></script>
+    <%- include ('../partials/header') %>
+</head>
+
+<body>
+<div class="wrapper">
+	<div class="lSide">
+		<%- include ('../partials/sidebar') %>
+	</div>
+	<div class="rSide">
+		<div class="head gradientr desk">
+			<%- include ('../partials/topdesk') %>
+		</div>
+		<div class="mainbox size-std column">
+			<div class="title-content size-std">
+				Decision Journey
+            </div>
+			<div class="top-info column" id="topInfo">
+                
+            </div>
+            <div class="cols-12 containt" style="margin: 20px 0;">
+                <div class="headtitle trans">
+                    <p class="nopad" style="padding: 5px 15px; position: relative;">
+                        Decision Journey
+                    </p>
+                </div>
+                <form class="control">
+                    <div class="list-control" style="border-bottom: none;">
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show</span>
+                            <select name="netting" id="netting" class="size-std">
+                                <option value="all">-- Show All --</option>
+                                <option value="Online">Online</option>
+                                <option value="Offline">Offline</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By Brand</span>
+                            <select name="brand" id="brand" class="size-std">
+                                <option value="all">-- Select Brand --</option>
+                                <% for(var i=0;i<brand.length;i++){ %>
+                                <option value="<%= brand[i].code %>"><%= brand[i].label %></option>
+                                <% } %>
+                                <option value="2">Competitor</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box size-std spc-rl">
+                            <button type="sbumit" class="myButton-submit">Show</button>
+                            <img src="<%= baseurl() %>/images/icon/loader.gif" alt="" class="loader" style="display: none;">
+                        </div>
+                    </div>
+                </form>
+                <div class="decisionContent full-length">
+
+                </div>
+                
+            </div>
+		</div>
+	</div>
+</div>
+</body>
+<%- include ('../partials/footer') %>
+<script>
+    $(".control").on("submit", function(){
+        var brand = $('#brand').val()
+        var netting = $('#netting').val()
+        $.ajax({
+            url: "<%= baseurl() %>decision/content/?brand="+brand+"&netting="+netting,
+            type: "GET",
+            cache: true,
+            beforeSend: function(){
+                $(".loader").show()
+            },success: function(chart){
+                $(".loader").hide()
+                $('.decisionContent').html(chart)
+            }
+        })
+        return false;
+    })
+</script>
+</html>

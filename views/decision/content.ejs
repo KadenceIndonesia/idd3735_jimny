@@ -1,0 +1,80 @@
+<style>
+    .accordionTree{
+        position: relative;
+        width: 20%;
+        background-color: #68BAF9;
+        color: #ffffff;
+    }
+    .accordionTree>li{
+        padding: 10px 10px;
+        cursor: pointer;
+    }
+    .accordionSubTree::before{
+        content: " ";
+        width: 15%;
+        height: 2px;
+        background-color: #b1d5f1;
+        position: absolute;
+        left: -15%;
+        top: 15px;
+    }
+    .accordionSubTree{
+        background-color: #68BAF9;
+        position: relative;
+        left: 118%;
+        top: -26px;
+    }
+    .accordionSubTree>li{
+        padding: 10px;
+    }
+    .accordionSubTreeFIx{
+        display: none;
+        position: absolute;
+        width: 80%;
+        left: 20%;
+        top: 0;
+        bottom: 0;
+    }
+</style>
+<button class="expandallaccord">Expand All</button>
+<button class="collapsellaccord">Collapse All</button>
+<div class="loader" style="display: none;">
+    <span class="loader-helper"></span><img src="<%= baseurl() %>images/icon/loader.gif" alt="">
+</div>
+<div class="full-length" id="chartbybrand" style="height: auto; background-color: #ececec; border: 1px solid #68baf9; position: relative;"></div>
+    <ul class="nopad accordionTree">
+        <% for(var i=0;i<step1.length;i++){ %>
+            <% if(step1[i].value > 0){ %>
+                <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>"><%= step1[i].label %> (<%= step1[i].percent %>%)</p>
+                    <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>">
+                        <% for(var x=0;x<step1[i].step2.length;x++){ %>
+                        <li class="havesub">
+                            <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>"><%= step1[i].step2[x].label %>(<%= step1[i].step2[x].percent %>%)</p>
+                            <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>">
+                                <% for(var y=0;y<step1[i].step2[x].step3.length;y++){ %>
+                                <li class="havesub">
+                                    <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>"><%= step1[i].step2[x].step3[y].label %>(<%= step1[i].step2[x].step3[y].value %>%)</p>
+                                    <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>">
+                                        <% if(step1[i].step2[x].step3[y].step4!=undefined){ %>
+                                        <% for(var z=0;z<step1[i].step2[x].step3[y].step4.length;z++){ %>
+                                        <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>_<%= z+1 %>"><%= step1[i].step2[x].step3[y].step4[z].label %>(<%= step1[i].step2[x].step3[y].step4[z].value %>%)</p>
+                                            <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>_<%= z+1 %>">
+                                                <li>Purchased(84%)</li>
+                                                <li>Purchased(84%)</li>
+                                            </ul>
+                                        </li>
+                                        <% }} %>
+                                    </ul>
+                                </li>
+                                <% } %>
+                            </ul>
+                        </li>
+                        <% } %>
+                    </ul>
+                </li>
+            <% } %>
+        <% } %>
+    </ul>
+</div>
+
+<%- include ('../partials/footer') %>

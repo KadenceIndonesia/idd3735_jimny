@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Document</title> -->
+    <link rel="stylesheet" href="<%= baseurl() %>css/style.css">
+    <link rel="stylesheet" href="<%= baseurl() %>css/mystyle.css">
+    <link rel="stylesheet" href="<%= baseurl() %>css/style_button.css">
+    <link rel="stylesheet" href="<%= baseurl() %>css/component.css">
+</head>
+<body>
+<div class="wrapper">
+    <div class="login-wrap">
+        <div class="fixMiddle loginBoxsize">
+            <div class="headLogin">
+                <img src="<%= baseurl() %>images/kadence_icon.png" alt="kadence">
+            </div>
+            <form action="<%= baseurl() %>login/auth" method="POST">
+            <div class="bodyLogin">
+                <table>
+                    <tr>
+                        <td>
+                            <input type="hidden" name="pid" placeholder="Your Email" value="IDD3735">
+                            <p><input type="email" name="email" placeholder="Your Email" value="admin@kadence.com"></p>
+                            <p>
+                                
+                            </p>
+                            <p><input type="password" name="password" placeholder="Your password" value="password"></p>
+                            <p><input type="submit" value="Login" class="myButton-flat-green"></p>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            </form>
+            <div class="bottomLogin">
+                <p class="size-std" style="position: absolute; bottom: 10px; left: 0; right: 0; height: 20px;">&copy;Copyright by Kadence Indonesia All right reserved</p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

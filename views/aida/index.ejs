@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>AIDA Analysis</title>
+    <link rel = "icon" href = "https://kadence.com/wp-content/uploads/2020/07/260x260.png" type = "image/x-icon">
+	<script src="<%= baseurl() %>plugin/flexmonster/theme/green/flexmonster.css"></script>
+    <%- include ('../partials/header') %>
+</head>
+
+<body>
+<div class="wrapper">
+	<div class="lSide">
+		<%- include ('../partials/sidebar') %>
+	</div>
+	<div class="rSide">
+		<div class="head gradientr desk">
+			<%- include ('../partials/topdesk') %>
+		</div>
+		<div class="mainbox size-std column">
+			<div class="title-content size-std">
+				<a href="<%= baseurl() %>">DASHBOARD</a> - AIDA Analysis
+            </div>
+			<div class="cols-12 containt" style="margin: 20px 0;">
+                <form class="control">
+                    <div class="list-control" style="border-bottom: none;">
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By Brand</span>
+                            <select name="brand" id="brand" class="size-std">
+                                <option value="all">-- Select Brand --</option>
+                                <% for(var i=0;i<brand.length;i++){ %>
+                                <option value="<%= brand[i].code %>"><%= brand[i].label %></option>
+                                <% } %>
+                                <option value="2">Competitor</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box size-std spc-rl">
+                            <button type="sbumit" class="myButton-submit">Show</button>
+                            <img src="<%= baseurl() %>/images/icon/loader.gif" alt="" class="loader" style="display: none;">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="cols-12 containt" style="margin: 20px 0;">
+                <div class="loader" style="display: none;">
+                    <span class="loader-helper"></span><img src="<%= baseurl() %>images/icon/loader.gif" alt="">
+                </div>
+                <div class="cols-12 containt" style="margin: 20px 0;">
+                    <div class="headtitle trans" style="margin-bottom: 0;">
+                        <p class="size-head3 nopad">AIDA Analysis <b class="titleCategory"></b> - Total Respondent = <b class="totalResp"></b> </p>
+                    </div>
+                    <div style="width: 100%;">
+                        <div class="chartbox" style="overflow: auto;">
+                            <div id="soi1" style="height: 500px; width: 4000px; margin: 0px auto; margin-left: 80px;">
+                            
+                            </div>
+                            <div id="aidaY" style="width: 4100px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</div>
+	</div>
+</div>
+</body>
+<%- include ('../partials/footer') %>
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script>
+    $(".control").on("submit", function(){
+        var brand = $('#brand').val()
+        $.ajax({
+            url: "<%= baseurl() %>report/aida/content/?brand="+brand,
+            type: "GET",
+            cache: true,
+            beforeSend: function(){
+                $(".loader").show()
+            },success: function(chartData){
+                $(".loader").hide()
+                $(".totalResp").text(chartData[2])
+                function compareDataPointYAscend(dataPoint1, dataPoint2) {
+                    return dataPoint1.y - dataPoint2.y;
+                }
+
+                function compareDataPointYDescend(dataPoint1, dataPoint2) {
+                    return dataPoint2.y - dataPoint1.y;
+                }
+
+                var soi1 = new CanvasJS.Chart("soi1",{
+                    animationEnabled: true,
+                    zoomEnabled: true,
+                    exportEnabled: true,
+                    axisY: {
+                        title: " ",
+                        minimum: 0,
+                        labelFontSize: 12,
+                        includeZero: true,
+                    },
+                    axisX: {
+                        title: " ",
+                        labelWrap: true,
+                        labelFontSize: 12,
+                        labelMaxWidth: 100,
+                        includeZero: true
+                    },
+                    data: [{
+                        toolTipContent: "<span style=\"color:#62C9C3\">{label}:</span> <span style=\"color:#CD853F\"><strong>{value} ({y}%)</strong></span>",
+                        type: "column",
+                        labelFontSize: 12,
+                        indexLabelFontColor: "black",
+                        yValueFormatString: "#0.##",
+                        indexLabel: "{y}%",
+                        dataPoints: chartData[1]
+                    }]
+                });
+                soi1.options.data[0].dataPoints.sort(compareDataPointYDescend);
+                soi1.render();
+                function sortValue(a,b){
+                    return b.percent - a.percent
+                }
+                var html = '<table class="full-tables" style="position: relative; top: -2px;">';
+                for (let i = 0; i < chartData[0].length; i++) {
+                    html += '<tr>'
+                        html += '<td style="width: 115px;">'+chartData[0][i].label+'</td>'
+                        var sorting = chartData[0][i].x.sort(sortValue)
+                        for (let x = 0; x < sorting.length; x++) {
+                            html += '<td style="width: 100px;">'+sorting[x].percent+'%</td>'
+                        }
+                    html += '</tr>'
+                }
+                html += '</table>'
+                $("#aidaY").html(html)
+            }
+        })
+        return false;
+    })
+</script>
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+</html>

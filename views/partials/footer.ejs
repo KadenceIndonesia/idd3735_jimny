@@ -1,0 +1,20 @@
+<script src="<%= baseurl() %>js/jquery-3.5.1.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('.rSide .head').css({
+        "height" : $('.lSide .head').height() +"px"
+    })
+    $('.wrapper').css({
+        "height" : $(window).height() +"px"
+    })
+    $('.value-control li').click(function() {
+        var ctrltext = $(this).data("select")
+        $('.text-control').text(ctrltext)
+    })
+    $('.square').css({
+        "height" : $('.square').width() +"px"
+    })
+})
+</script>
+<script type="text/javascript" src="<%= baseurl() %>js/resize.window.js"></script>
+<script type="text/javascript" src="<%= baseurl() %>js/animate.js"></script>

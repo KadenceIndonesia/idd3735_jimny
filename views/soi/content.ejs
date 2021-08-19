@@ -1,0 +1,36 @@
+<div id="soi1" style="height: 1400px; margin: 0px auto;"></div>
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+<script>
+    $(document).ready(function(){
+        var soi1 = new CanvasJS.Chart("soi1",{
+            animationEnabled: true,
+            zoomEnabled: true,
+            exportEnabled: true,
+            axisY: {
+                title: " ",
+                minimum: 0,
+                includeZero: true,
+                labelFontSize: 12,
+            },
+            axisX: {
+                title: " ",
+                labelFontSize: 12,
+                labelWrap: true,
+                labelMaxWidth: 100,
+                includeZero: true
+            },
+            data: [{
+                indexLabelFontSize: 13,
+                toolTipContent: "<span style=\"color:#62C9C3\">{indexLabel}:</span> <span style=\"color:#CD853F\"><strong>{label}%({value})</strong></span>",
+                type: "bar",
+                indexLabelFontColor: "black",
+                indexLabelPlacement: "inside",
+                yValueFormatString: "#0.##",
+                indexLabel: "{y}",
+                dataPoints: <%- JSON.stringify(data) %>
+            }]
+        });
+        soi1.render();
+    })
+</script>
+<script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>

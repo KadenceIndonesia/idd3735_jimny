@@ -1,0 +1,35 @@
+<div class="top-icon-menu desk delay">
+    <ul>
+        <li class="size-std option-click notifpopup" onclick="clickToggle(notif)" style="position: relative;">
+            <img src="<%= baseurl() %>images/icon/bell.png">
+        </li>
+        <li class="size-std option-click" onClick="clickToggle(profile)"><img src="<%= baseurl() %>images/icon/profile.png">&nbsp;&nbsp;<%= login[0].username %></li>
+    </ul>
+</div>
+<div class="box-arrow delay desk" onClick="resizes()">
+    <div class="arrow delay"></div>
+    <div class="arrow delay"></div>
+</div>
+<div class="option-box option-menu shadow half size-std desk" id="notif" style="display: none;">
+    <ul id="notifpopup">
+        
+    </ul>
+</div>	
+<div class="option-box option-menu shadow half size-std desk" id="profile" style="display: none;">
+    <ul class="nopad">
+        <li><a href="<%= baseurl() %>uploadfile/">Upload File</a></li>
+        <li style="border-top: 1px solid #f3eeee"><a href="<%= baseurl() %>logout">Logout</a></li>
+    </ul>
+</div>
+<script>
+// $(document).ready(function(){
+//     $('.notifpopup').click(function(){
+//         $.ajax({
+//             url: "<%= baseurl() %>workflow/notifpopup",
+//             success: function(notif){
+//                 $('#notifpopup').html(notif);
+//             }
+//         })
+//     })
+// })
+// </script>
