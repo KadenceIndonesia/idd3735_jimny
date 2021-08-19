@@ -65,8 +65,8 @@ exports.getSourceOfInformationContent = async function(req,res){
 
 
     // 2018
-    var dataB12018 = await getData(pid, "B12018");
-    var dataB2a2018 = await getData(pid, "B2a2018");
+    var dataB12018 = await getData("idd37352018", "B12018");
+    var dataB2a2018 = await getData("idd37352018", "B2a2018");
     var dataLength2018 = 1500
     var result2018 = []
     for (let i = 0; i < getattribute.length; i++) {
