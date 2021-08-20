@@ -116,12 +116,12 @@ exports.getDecisionContent = async function(req,res){
                 step1.push({
                     label: dataStep1[i].label,
                     value: 1,
-                    percent: (1 * 100 / dataLength).toFixed(2),
+                    percent: 0,
                     step2: step2
                 })
             }else{ //step 1 == true
                 step1[findArr].value = step1[findArr].value + 1 //update value di step 1
-                step1[findArr].percent = (step1[findArr].value + 1 * 100 / dataLength).toFixed(2) //update percent di step 1
+                // step1[findArr].percent = (step1[findArr].value + 1 * 100 / dataLength).toFixed(2)
                 for (let y = 0; y < dataStep2.length; y++) {
                     if(dataStep2[y].sbjnum==dataStep1[i].sbjnum){
                         var findArr2 = await findObj(step1[findArr].step2, "label", dataStep2[y].label)
@@ -211,9 +211,10 @@ exports.getDecisionContent = async function(req,res){
 
     // update percent step 2
     for (let i = 0; i < step1.length; i++) {
+        step1[i].percent = (step1[i].value / dataLength * 100).toFixed(2)
         var lengthStep1 = step1[i].value
         for (let x = 0; x < step1[i].step2.length; x++) {
-            step1[i].step2[x].percent = (step1[i].step2[x].value * 100 / lengthStep1).toFixed(2)
+            step1[i].step2[x].percent = (step1[i].step2[x].value / lengthStep1 * 100).toFixed(2)
         }
     }
     res.render("decision/content",{
