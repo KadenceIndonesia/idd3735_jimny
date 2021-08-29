@@ -43,12 +43,30 @@
                         </div>
                         <div class="list-control-box spc-rl">
                             <span class="size-std">Show By Brand</span>
-                            <select name="brand" id="brand" class="size-std">
+                            <select name="break1" id="brand" class="size-std">
                                 <option value="all">-- Select Brand --</option>
                                 <% for(var i=0;i<brand.length;i++){ %>
                                 <option value="<%= brand[i].code %>"><%= brand[i].label %></option>
                                 <% } %>
                                 <option value="2">Competitor</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By Age Group</span>
+                            <select name="break2" id="filterage" class="size-std">
+                                <option value="all">-- Select Age Group --</option>
+                                <% for(var i=0;i<ageGroup.length;i++){ %>
+                                    <option value="<%= ageGroup[i].code %>"><%= ageGroup[i].label %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By SES Group</span>
+                            <select name="break3" id="filterses" class="size-std">
+                                <option value="all">-- Select SES Group --</option>
+                                <% for(var i=0;i<sesGroup.length;i++){ %>
+                                    <option value="<%= sesGroup[i].code %>"><%= sesGroup[i].label %></option>
+                                <% } %>
                             </select>
                         </div>
                         <div class="list-control-box size-std spc-rl">
@@ -69,11 +87,11 @@
 <%- include ('../partials/footer') %>
 <script>
     $(".control").on("submit", function(){
-        var brand = $('#brand').val()
-        var netting = $('#netting').val()
+        var data = $(".control").serialize();
         $.ajax({
-            url: "<%= baseurl() %>decision/content/?brand="+brand+"&netting="+netting,
-            type: "GET",
+            url: "<%= baseurl() %>decision/content/",
+            type: "POST",
+            data: data,
             cache: true,
             beforeSend: function(){
                 $(".loader").show()

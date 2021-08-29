@@ -25,30 +25,37 @@ exports.getIndex = async function(req,res){
     if(req.session.loggedin==true){
         var brand = await getAttributeByQid(pid, "A1");
         const login = req.session.data
-        
+        var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
+        var sesGroup = await getAttributeByQid(pid, "S16");
         res.render("decision/index",{
             login: login,
             moment: moment,
-            brand: brand
+            brand: brand,
+            ageGroup: ageGroup,
+            sesGroup: sesGroup
         })  
     }else{
         res.redirect("./login")
     }
 }
 exports.getDecisionContent = async function(req,res){
-    if(req.query.brand=="all"){
-        var dataStep1 = await getData(pid, "B1");
-    }else{
-        var dataStep1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-    }
+    var code1 = req.body.break1
+    var code2 = req.body.break2
+    var code3 = req.body.break3
+    var dataStep1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataStep2 = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataStep3 = await dataFilterByBreak(pid, "C3", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataStep4 = await dataFilterByBreak(pid, "C4a", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    // if(req.query.brand=="all"){
+    //     var dataStep1 = await getData(pid, "B1");
+    // }else{
+    //     var dataStep1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
+    // }
     var dataLength = dataStep1.length
-    const step1 = []
+    var step1 = []
     var step2;
     var step3;
     var step4;
-    const dataStep2 = await getData(pid, "B2a");
-    const dataStep3 = await getData(pid, "C3");
-    const dataStep4 = await getData(pid, "C4a");
 
     const nettingLogic = (netting, i) => {
         if(netting=="all"){

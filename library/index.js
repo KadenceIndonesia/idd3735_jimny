@@ -28,7 +28,7 @@ global.getData = function(pid, qidx){
 }
 global.getDataByBreak = function(pid, qidx, topbreak, code){
     return new Promise(resolve => {
-        axios.get(process.env.APIURL+"/api/"+pid+"/data/"+qidx+"/break/"+topbreak+"/"+code)
+        axios.post(process.env.APIURL+"/api/"+pid+"/data/"+qidx+"/break/"+topbreak+"/"+code)
         .then((response) => {
             resolve(response.data)
         })
@@ -37,6 +37,26 @@ global.getDataByBreak = function(pid, qidx, topbreak, code){
         })
     })
 }
+
+global.dataFilterByBreak = function(pid, qidx, break1, break2, break3, code1, code2, code3){
+    return new Promise(resolve => {
+        axios.post(process.env.APIURL+"/api/"+pid+"/data/"+qidx+"/break/", {
+            break1: break1,
+            code1: code1,
+            break2: break2,
+            code2: code2,
+            break3: break3,
+            code3: code3,
+        })
+        .then((response) => {
+            resolve(response.data)
+        })
+        .catch(error => {
+            resolve(error)
+        })
+    })
+}
+
 global.getAttributeByQid = function(pid, qidx){
     return new Promise(resolve => {
         axios.get(process.env.APIURL+"/api/"+pid+"/data/"+qidx+"/attribute")

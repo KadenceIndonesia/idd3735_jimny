@@ -5,11 +5,15 @@ require("../library/index")
 exports.getSourceOfInformation = async function(req,res){
     if(req.session.loggedin==true){
         var brand = await getAttributeByQid(pid, "A1");
+        var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
+        var sesGroup = await getAttributeByQid(pid, "S16");
         const login = req.session.data;
         
         res.render("soi/index", {
             login: login,
-            brand: brand
+            brand: brand,
+            ageGroup: ageGroup,
+            sesGroup: sesGroup
         })
     }else{
         res.redirect("../../login")
@@ -18,13 +22,18 @@ exports.getSourceOfInformation = async function(req,res){
 
 
 exports.getSourceOfInformationContent = async function(req,res){
-    if(req.query.brand=="all"){
-        var dataB1 = await getData(pid, "B1");
-        var dataB2a = await getData(pid, "B2a");
-    }else{
-        var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-        var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
-    }
+    var code1 = req.body.break1
+    var code2 = req.body.break2
+    var code3 = req.body.break3
+    var dataB1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    // if(req.query.brand=="all"){
+    //     var dataB1 = await getData(pid, "B1");
+    //     var dataB2a = await getData(pid, "B2a");
+    // }else{
+    //     var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
+    //     var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
+    // }
     
     const getattribute = await getAttributeByQid(pid, "B1");
     var dataLength = dataB1.length
@@ -113,22 +122,32 @@ exports.getSourceOfInformationContent = async function(req,res){
 exports.getAida = async function(req,res){
     const login = req.session.data;
     var brand = await getAttributeByQid(pid, "A1");
+    var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
+    var sesGroup = await getAttributeByQid(pid, "S16");
     res.render("aida/index", {
         login: login,
-        brand: brand
+        brand: brand,
+        ageGroup: ageGroup,
+        sesGroup: sesGroup
     });
 }
 
 exports.getAidaContent = async function(req,res){
-    if(req.query.brand=="all"){
-        var dataB1 = await getData(pid, "B1");
-        var dataB2a = await getData(pid, "B2a");
-        var dataB5 = await getData(pid, "B5");
-    }else{
-        var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-        var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
-        var dataB5 = await getDataByBreak(pid, "B5", "A7", req.query.brand);
-    }
+    var code1 = req.body.break1
+    var code2 = req.body.break2
+    var code3 = req.body.break3
+    var dataB1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    var dataB5 = await dataFilterByBreak(pid, "B5", "A7", "S6_GRUP", "S16", code1, code2, code3);
+    // if(req.query.brand=="all"){
+    //     var dataB1 = await getData(pid, "B1");
+    //     var dataB2a = await getData(pid, "B2a");
+    //     var dataB5 = await getData(pid, "B5");
+    // }else{
+    //     var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
+    //     var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
+    //     var dataB5 = await getDataByBreak(pid, "B5", "A7", req.query.brand);
+    // }
 
     const getattributeB1 = await getAttributeByQid(pid, "B1");
     var dataLength = dataB1.length
@@ -216,6 +235,7 @@ exports.getAidaContent = async function(req,res){
         var percentX = achievementX * 100 / dataLength
         resultX[z].y = percentX
     }
+    // console.log(resultY[0].x)
 
     res.send([resultY,resultX,dataLength]);
 }

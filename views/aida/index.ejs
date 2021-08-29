@@ -27,12 +27,30 @@
                     <div class="list-control" style="border-bottom: none;">
                         <div class="list-control-box spc-rl">
                             <span class="size-std">Show By Brand</span>
-                            <select name="brand" id="brand" class="size-std">
+                            <select name="break1" id="brand" class="size-std">
                                 <option value="all">-- Select Brand --</option>
                                 <% for(var i=0;i<brand.length;i++){ %>
                                 <option value="<%= brand[i].code %>"><%= brand[i].label %></option>
                                 <% } %>
                                 <option value="2">Competitor</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By Age Group</span>
+                            <select name="break2" id="filterage" class="size-std">
+                                <option value="all">-- Select Age Group --</option>
+                                <% for(var i=0;i<ageGroup.length;i++){ %>
+                                    <option value="<%= ageGroup[i].code %>"><%= ageGroup[i].label %></option>
+                                <% } %>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By SES Group</span>
+                            <select name="break3" id="filterses" class="size-std">
+                                <option value="all">-- Select SES Group --</option>
+                                <% for(var i=0;i<sesGroup.length;i++){ %>
+                                    <option value="<%= sesGroup[i].code %>"><%= sesGroup[i].label %></option>
+                                <% } %>
                             </select>
                         </div>
                         <div class="list-control-box size-std spc-rl">
@@ -69,10 +87,12 @@
 <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
 <script>
     $(".control").on("submit", function(){
-        var brand = $('#brand').val()
+        var data = $('.control').serialize()
+        console.log(data)
         $.ajax({
-            url: "<%= baseurl() %>report/aida/content/?brand="+brand,
-            type: "GET",
+            url: "<%= baseurl() %>report/aida/content",
+            type: "POST",
+            data: data,
             cache: true,
             beforeSend: function(){
                 $(".loader").show()
@@ -124,8 +144,8 @@
                     html += '<tr>'
                         html += '<td style="width: 115px;">'+chartData[0][i].label+'</td>'
                         var sorting = chartData[0][i].x.sort(sortValue)
-                        for (let x = 0; x < sorting.length; x++) {
-                            html += '<td style="width: 100px;">'+sorting[x].percent+'%</td>'
+                        for (let z = 0; z < sorting.length; z++) {
+                            html += '<td style="width: 100px;">'+sorting[z].percent+'%</td>'
                         }
                     html += '</tr>'
                 }
