@@ -5,15 +5,21 @@ require("../library/index")
 exports.getSourceOfInformation = async function(req,res){
     if(req.session.loggedin==true){
         var brand = await getAttributeByQid(pid, "A1");
-        var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
-        var sesGroup = await getAttributeByQid(pid, "S16");
+        var arrbrand = [1, 10, 20, 30, 40, 51, 60, 34,3,71,42,52,8,17,32,21,41,43,2,5,12,36,45,6,11,16,31,33,44,7,13,14,35,37];
+        var showBrand = []
+        for (let i = 0; i < brand.length; i++) {
+            if(arrbrand.indexOf(brand[i].code)!=-1){
+                showBrand.push({
+                    code: brand[i].code,
+                    label: brand[i].label
+                })
+            }
+        }
         const login = req.session.data;
         
         res.render("soi/index", {
             login: login,
-            brand: brand,
-            ageGroup: ageGroup,
-            sesGroup: sesGroup
+            brand: showBrand
         })
     }else{
         res.redirect("../../login")
@@ -22,18 +28,45 @@ exports.getSourceOfInformation = async function(req,res){
 
 
 exports.getSourceOfInformationContent = async function(req,res){
-    var code1 = req.body.break1
-    var code2 = req.body.break2
-    var code3 = req.body.break3
-    var dataB1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    // if(req.query.brand=="all"){
-    //     var dataB1 = await getData(pid, "B1");
-    //     var dataB2a = await getData(pid, "B2a");
-    // }else{
-    //     var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-    //     var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
-    // }
+    var break2 = req.body.break2
+    var break3 = req.body.break3
+    var code1 = req.body.code1
+    var code2 = req.body.code2
+    var code3 = req.body.code3
+    var parentBrand = [1, 10, 20, 30, 40, 51, 60]
+    var childBrand = [[1, 2, 3, 71, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17], [20, 21, 22, 23, 24, 25], [30, 31, 31, 33, 34, 35, 36, 37], [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [51, 52, 53, 54, 55], [60, 61, 62, 63]]
+    var checkParent = parentBrand.indexOf(parseInt(code1))
+    // jika code 1 terpilih parent brand
+    if(checkParent!=-1){
+        var mergeB1 = [];
+        var mergeB2a = [];
+        var mergeB12018 = [];
+        var mergeB2a2018 = [];
+        for (let i = 0; i < childBrand[0].length; i++) {
+            mergeB1.push(await dataFilterByBreak(pid, "B1", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB2a.push(await dataFilterByBreak(pid, "B2a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB12018.push(await dataFilterByBreak("idd37352018", "B12018", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB2a2018.push(await dataFilterByBreak("idd37352018", "B2a2018", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+        }
+    }else{
+        var dataB1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
+        var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
+        var dataB12018 = await dataFilterByBreak("idd37352018", "B12018", "A7", break2, break3, code1, code2, code3);
+        var dataB2a2018 = await dataFilterByBreak("idd37352018", "B2a2018", "A7", break2, break3, code1, code2, code3);
+    }
+    var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
+        return arr.concat(mergeB1[key]);
+    }, []);
+    var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
+        return arr.concat(mergeB2a[key]);
+    }, []);
+    var dataB12018 = Object.keys(mergeB12018).reduce(function(arr, key) {
+        return arr.concat(mergeB12018[key]);
+    }, []);
+    var dataB2a2018 = Object.keys(mergeB2a2018).reduce(function(arr, key) {
+        return arr.concat(mergeB2a2018[key]);
+    }, []);
+
     
     const getattribute = await getAttributeByQid(pid, "B1");
     var dataLength = dataB1.length
@@ -74,9 +107,7 @@ exports.getSourceOfInformationContent = async function(req,res){
 
 
     // 2018
-    var dataB12018 = await dataFilterByBreak("idd37352018", "B12018", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataB2a2018 = await dataFilterByBreak("idd37352018", "B2a2018", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataLength2018 = 1500
+    var dataLength2018 = dataB12018.length
     var result2018 = []
     for (let i = 0; i < getattribute.length; i++) {
         result2018.push({
@@ -115,39 +146,64 @@ exports.getSourceOfInformationContent = async function(req,res){
 
 
 
-    res.send([result, dataLength, result2018])
+    res.send([result, dataLength, result2018, dataLength2018])
 }
 
 // AIDA
 exports.getAida = async function(req,res){
     const login = req.session.data;
     var brand = await getAttributeByQid(pid, "A1");
+    var arrbrand = [1, 10, 20, 30, 40, 51, 60, 34,3,71,42,52,8,17,32,21,41,43,2,5,12,36,45,6,11,16,31,33,44,7,13,14,35,37];
+    var showBrand = []
+    for (let i = 0; i < brand.length; i++) {
+        if(arrbrand.indexOf(brand[i].code)!=-1){
+            showBrand.push({
+                code: brand[i].code,
+                label: brand[i].label
+            })
+        }
+    }
     var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
     var sesGroup = await getAttributeByQid(pid, "S16");
     res.render("aida/index", {
         login: login,
-        brand: brand,
-        ageGroup: ageGroup,
-        sesGroup: sesGroup
+        brand: showBrand
     });
 }
 
 exports.getAidaContent = async function(req,res){
-    var code1 = req.body.break1
-    var code2 = req.body.break2
-    var code3 = req.body.break3
-    var dataB1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataB5 = await dataFilterByBreak(pid, "B5", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    // if(req.query.brand=="all"){
-    //     var dataB1 = await getData(pid, "B1");
-    //     var dataB2a = await getData(pid, "B2a");
-    //     var dataB5 = await getData(pid, "B5");
-    // }else{
-    //     var dataB1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-    //     var dataB2a = await getDataByBreak(pid, "B2a", "A7", req.query.brand);
-    //     var dataB5 = await getDataByBreak(pid, "B5", "A7", req.query.brand);
-    // }
+    var break2 = req.body.break2
+    var break3 = req.body.break3
+    var code1 = req.body.code1
+    var code2 = req.body.code2
+    var code3 = req.body.code3
+    var parentBrand = [1, 10, 20, 30, 40, 51, 60]
+    var childBrand = [[1, 2, 3, 71, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17], [20, 21, 22, 23, 24, 25], [30, 31, 31, 33, 34, 35, 36, 37], [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [51, 52, 53, 54, 55], [60, 61, 62, 63]]
+    var checkParent = parentBrand.indexOf(parseInt(code1))
+
+    if(checkParent!=-1){
+        var mergeB1 = [];
+        var mergeB2a = [];
+        var mergeB5 = [];
+        for (let i = 0; i < childBrand[0].length; i++) {
+            mergeB1.push(await dataFilterByBreak(pid, "B1", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB2a.push(await dataFilterByBreak(pid, "B2a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB5.push(await dataFilterByBreak(pid, "B5", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+        }
+    }else{
+        var dataB1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
+        var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
+        var dataB5 = await dataFilterByBreak(pid, "B5", "A7", break2, break3, code1, code2, code3);
+    }
+    var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
+        return arr.concat(mergeB1[key]);
+    }, []);
+    var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
+        return arr.concat(mergeB2a[key]);
+    }, []);
+    var dataB5 = Object.keys(mergeB5).reduce(function(arr, key) {
+        return arr.concat(mergeB5[key]);
+    }, []);
 
     const getattributeB1 = await getAttributeByQid(pid, "B1");
     var dataLength = dataB1.length
@@ -235,7 +291,6 @@ exports.getAidaContent = async function(req,res){
         var percentX = achievementX * 100 / dataLength
         resultX[z].y = percentX
     }
-    // console.log(resultY[0].x)
 
     res.send([resultY,resultX,dataLength]);
 }

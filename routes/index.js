@@ -6,7 +6,7 @@ Router.get("/", indexController.getIndex);
 Router.post("/decision/content", indexController.getDecisionContent);
 Router.get("/detail/:id", indexController.getDetail);
 Router.get("/total/", indexController.getTotal);
-Router.get("/uploadfile", indexController.getUpload);
-Router.post("/uploadfile/upload", indexController.postUpload);
+
+Router.post("/filter", indexController.filterGroup)
 
 module.exports = Router;

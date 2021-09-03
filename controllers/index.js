@@ -24,33 +24,67 @@ global.findObj = function(array, attr, value){
 exports.getIndex = async function(req,res){
     if(req.session.loggedin==true){
         var brand = await getAttributeByQid(pid, "A1");
+        var arrbrand = [1, 10, 20, 30, 40, 51, 60, 34,3,71,42,52,8,17,32,21,41,43,2,5,12,36,45,6,11,16,31,33,44,7,13,14,35,37];
+        var showBrand = []
+        for (let i = 0; i < brand.length; i++) {
+            if(arrbrand.indexOf(brand[i].code)!=-1){
+                showBrand.push({
+                    code: brand[i].code,
+                    label: brand[i].label
+                })
+            }
+        }
         const login = req.session.data
-        var ageGroup = await getAttributeByQid(pid, "S6_GRUP");
-        var sesGroup = await getAttributeByQid(pid, "S16");
         res.render("decision/index",{
             login: login,
             moment: moment,
-            brand: brand,
-            ageGroup: ageGroup,
-            sesGroup: sesGroup
+            brand: showBrand
         })  
     }else{
         res.redirect("./login")
     }
 }
 exports.getDecisionContent = async function(req,res){
-    var code1 = req.body.break1
-    var code2 = req.body.break2
-    var code3 = req.body.break3
-    var dataStep1 = await dataFilterByBreak(pid, "B1", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataStep2 = await dataFilterByBreak(pid, "B2a", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataStep3 = await dataFilterByBreak(pid, "C3", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    var dataStep4 = await dataFilterByBreak(pid, "C4a", "A7", "S6_GRUP", "S16", code1, code2, code3);
-    // if(req.query.brand=="all"){
-    //     var dataStep1 = await getData(pid, "B1");
-    // }else{
-    //     var dataStep1 = await getDataByBreak(pid, "B1", "A7", req.query.brand);
-    // }
+    var break2 = req.body.break2
+    var break3 = req.body.break3
+    var code1 = req.body.code1
+    var code2 = req.body.code2
+    var code3 = req.body.code3
+
+    var parentBrand = [1, 10, 20, 30, 40, 51, 60]
+    var childBrand = [[1, 2, 3, 71, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17], [20, 21, 22, 23, 24, 25], [30, 31, 31, 33, 34, 35, 36, 37], [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [51, 52, 53, 54, 55], [60, 61, 62, 63]]
+    var checkParent = parentBrand.indexOf(parseInt(code1))
+    // jika code 1 terpilih parent brand
+    if(checkParent!=-1){
+        var mergeStep1 = [];
+        var mergeStep2 = [];
+        var mergeStep3 = [];
+        var mergeStep4 = [];
+        for (let i = 0; i < childBrand[0].length; i++) {
+            mergeStep1.push(await dataFilterByBreak(pid, "B1", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeStep2.push(await dataFilterByBreak(pid, "B2a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeStep3.push(await dataFilterByBreak(pid, "C3", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeStep4.push(await dataFilterByBreak(pid, "C4a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+        }
+    }else{
+        var dataStep1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
+        var dataStep2 = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
+        var dataStep3 = await dataFilterByBreak(pid, "C3", "A7", break2, break3, code1, code2, code3);
+        var dataStep4 = await dataFilterByBreak(pid, "C4a", "A7", break2, break3, code1, code2, code3);
+    }
+    var dataStep1 = Object.keys(mergeStep1).reduce(function(arr, key) {
+        return arr.concat(mergeStep1[key]);
+    }, []);
+    var dataStep2 = Object.keys(mergeStep2).reduce(function(arr, key) {
+        return arr.concat(mergeStep2[key]);
+    }, []);
+    var dataStep3 = Object.keys(mergeStep3).reduce(function(arr, key) {
+        return arr.concat(mergeStep3[key]);
+    }, []);
+    var dataStep4 = Object.keys(mergeStep4).reduce(function(arr, key) {
+        return arr.concat(mergeStep4[key]);
+    }, []);
+
     var dataLength = dataStep1.length
     var step1 = []
     var step2;
@@ -252,33 +286,14 @@ exports.getTotal = async function(req,res){
     // }
 }
 
-exports.getUpload = async function(req,res){
-    // if(req.session.email==undefined){
-    //     res.redirect("../login")
-    // }else{
-        var login = ({idses: req.session.id, nameses: req.session.name, emailses: req.session.email, typeses: req.session.type})
-        res.render("importfile",{
-            login: login,
-            moment: moment
-        })
-    // }
-}
-
-exports.postUpload = async function(req,res){
-    let uploadPath;
-    var filename = req.files.filexls;
-    var extension = path.extname(filename.name);
-    uploadPath = "public/data/overall_achievement.xlsx"
-    var date = new Date()
-    filename.mv(uploadPath, function(errupload){
-        if(errupload){
-            throw err;
-        }else{
-            db.query("INSERT INTO dataSync VALUES(null,?)",[date], function(errsave,syncdata){
-                if(syncdata){
-                    res.redirect("../../")
-                }
-            })
-        }
-    })
+exports.filterGroup = async function(req,res){
+    var break2 = req.body.break2;
+    if(break2!="all"){
+        var break2Group = await getAttributeByQid(pid, break2);
+    }
+    var break3 = req.body.break3;
+    if(break3!="all"){
+        var break3Group = await getAttributeByQid(pid, break3);
+    }
+    res.send([break2Group, break3Group])
 }

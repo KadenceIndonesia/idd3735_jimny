@@ -34,7 +34,7 @@
                 <form class="control">
                     <div class="list-control" style="border-bottom: none;">
                         <div class="list-control-box spc-rl">
-                            <span class="size-std">Show</span>
+                            <span class="size-std">Show</span><br>
                             <select name="netting" id="netting" class="size-std">
                                 <option value="all">-- Show All --</option>
                                 <option value="Online">Online</option>
@@ -42,34 +42,48 @@
                             </select>
                         </div>
                         <div class="list-control-box spc-rl">
-                            <span class="size-std">Show By Brand</span>
-                            <select name="break1" id="brand" class="size-std">
+                            <span class="size-std">Show By Brand</span><br>
+                            <select name="code1" id="brand" class="size-std">
                                 <option value="all">-- Select Brand --</option>
                                 <% for(var i=0;i<brand.length;i++){ %>
                                 <option value="<%= brand[i].code %>"><%= brand[i].label %></option>
                                 <% } %>
-                                <option value="2">Competitor</option>
                             </select>
                         </div>
                         <div class="list-control-box spc-rl">
-                            <span class="size-std">Show By Age Group</span>
-                            <select name="break2" id="filterage" class="size-std">
-                                <option value="all">-- Select Age Group --</option>
-                                <% for(var i=0;i<ageGroup.length;i++){ %>
-                                    <option value="<%= ageGroup[i].code %>"><%= ageGroup[i].label %></option>
-                                <% } %>
+                            <span class="size-std">Demografi 1</span><br>
+                            <select name="break2" id="break2" class="size-std" onChange="filterGroup()">
+                                <option value="all">-- Show All --</option>
+                                <option value="S3">City</option>
+                                <option value="S5">Gender</option>
+                                <option value="S6_GRUP">Age</option>
+                                <option value="S16">SES</option>
                             </select>
                         </div>
                         <div class="list-control-box spc-rl">
-                            <span class="size-std">Show By SES Group</span>
-                            <select name="break3" id="filterses" class="size-std">
-                                <option value="all">-- Select SES Group --</option>
-                                <% for(var i=0;i<sesGroup.length;i++){ %>
-                                    <option value="<%= sesGroup[i].code %>"><%= sesGroup[i].label %></option>
-                                <% } %>
+                            <span class="size-std"></span><br>
+                            <select name="code2" id="code2" class="size-std">
+                                <option value="all">-- Select Group --</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Demografi 2</span><br>
+                            <select name="break3" id="break3" class="size-std" onChange="filterGroup()">
+                                <option value="all">-- Show All --</option>
+                                <option value="S3" id="S3">City</option>
+                                <option value="S5" id="S5">Gender</option>
+                                <option value="S6_GRUP" id="S6_GRUP">Age</option>
+                                <option value="S16" id="S16">SES</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std"></span><br>
+                            <select name="code3" id="code3" class="size-std">
+                                <option value="all">-- Select Group --</option>
                             </select>
                         </div>
                         <div class="list-control-box size-std spc-rl">
+                            <br>&nbsp;
                             <button type="sbumit" class="myButton-submit">Show</button>
                             <img src="<%= baseurl() %>/images/icon/loader.gif" alt="" class="loader" style="display: none;">
                         </div>
@@ -102,5 +116,35 @@
         })
         return false;
     })
+
+    function filterGroup(){
+        var data = $(".control").serialize();
+        $.ajax({
+            url: '<%= baseurl() %>filter',
+            type: "POST",
+            data: data,
+            cache: true,
+            beforeSend: function(load){
+
+            },success: function(result){
+                if($("#break2").val() != "all"){
+                    var html1;
+                    for (let i = 0; i < result[0].length; i++) {
+                        html1 += '<option value="'+result[0][i].code+'">'+result[0][i].label+'</option>'
+                    }
+                    $("#code2").html(html1)
+                    $("#break3 option").show()
+                    $("#"+$("#break2").val()).hide()
+                }
+                if($("#break3").val() != "all"){
+                    var html2;
+                    for (let i = 0; i < result[1].length; i++) {
+                        html2 += '<option value="'+result[1][i].code+'">'+result[1][i].label+'</option>'
+                    }
+                    $("#code3").html(html2)
+                }
+            }
+        })
+    }
 </script>
 </html>
