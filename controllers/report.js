@@ -48,24 +48,24 @@ exports.getSourceOfInformationContent = async function(req,res){
             mergeB12018.push(await dataFilterByBreak("idd37352018", "B12018", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
             mergeB2a2018.push(await dataFilterByBreak("idd37352018", "B2a2018", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
         }
+        var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
+            return arr.concat(mergeB1[key]);
+        }, []);
+        var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
+            return arr.concat(mergeB2a[key]);
+        }, []);
+        var dataB12018 = Object.keys(mergeB12018).reduce(function(arr, key) {
+            return arr.concat(mergeB12018[key]);
+        }, []);
+        var dataB2a2018 = Object.keys(mergeB2a2018).reduce(function(arr, key) {
+            return arr.concat(mergeB2a2018[key]);
+        }, []);
     }else{
         var dataB1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
         var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
         var dataB12018 = await dataFilterByBreak("idd37352018", "B12018", "A7", break2, break3, code1, code2, code3);
         var dataB2a2018 = await dataFilterByBreak("idd37352018", "B2a2018", "A7", break2, break3, code1, code2, code3);
     }
-    var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
-        return arr.concat(mergeB1[key]);
-    }, []);
-    var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
-        return arr.concat(mergeB2a[key]);
-    }, []);
-    var dataB12018 = Object.keys(mergeB12018).reduce(function(arr, key) {
-        return arr.concat(mergeB12018[key]);
-    }, []);
-    var dataB2a2018 = Object.keys(mergeB2a2018).reduce(function(arr, key) {
-        return arr.concat(mergeB2a2018[key]);
-    }, []);
 
     
     const getattribute = await getAttributeByQid(pid, "B1");
@@ -190,20 +190,20 @@ exports.getAidaContent = async function(req,res){
             mergeB2a.push(await dataFilterByBreak(pid, "B2a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
             mergeB5.push(await dataFilterByBreak(pid, "B5", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
         }
+        var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
+            return arr.concat(mergeB1[key]);
+        }, []);
+        var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
+            return arr.concat(mergeB2a[key]);
+        }, []);
+        var dataB5 = Object.keys(mergeB5).reduce(function(arr, key) {
+            return arr.concat(mergeB5[key]);
+        }, []);
     }else{
         var dataB1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
         var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
         var dataB5 = await dataFilterByBreak(pid, "B5", "A7", break2, break3, code1, code2, code3);
     }
-    var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
-        return arr.concat(mergeB1[key]);
-    }, []);
-    var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
-        return arr.concat(mergeB2a[key]);
-    }, []);
-    var dataB5 = Object.keys(mergeB5).reduce(function(arr, key) {
-        return arr.concat(mergeB5[key]);
-    }, []);
 
     const getattributeB1 = await getAttributeByQid(pid, "B1");
     var dataLength = dataB1.length

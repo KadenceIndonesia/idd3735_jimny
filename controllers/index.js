@@ -66,24 +66,25 @@ exports.getDecisionContent = async function(req,res){
             mergeStep3.push(await dataFilterByBreak(pid, "C3", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
             mergeStep4.push(await dataFilterByBreak(pid, "C4a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
         }
+        var dataStep1 = Object.keys(mergeStep1).reduce(function(arr, key) {
+            return arr.concat(mergeStep1[key]);
+        }, []);
+        var dataStep2 = Object.keys(mergeStep2).reduce(function(arr, key) {
+            return arr.concat(mergeStep2[key]);
+        }, []);
+        var dataStep3 = Object.keys(mergeStep3).reduce(function(arr, key) {
+            return arr.concat(mergeStep3[key]);
+        }, []);
+        var dataStep4 = Object.keys(mergeStep4).reduce(function(arr, key) {
+            return arr.concat(mergeStep4[key]);
+        }, []);
     }else{
         var dataStep1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
         var dataStep2 = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
         var dataStep3 = await dataFilterByBreak(pid, "C3", "A7", break2, break3, code1, code2, code3);
         var dataStep4 = await dataFilterByBreak(pid, "C4a", "A7", break2, break3, code1, code2, code3);
     }
-    var dataStep1 = Object.keys(mergeStep1).reduce(function(arr, key) {
-        return arr.concat(mergeStep1[key]);
-    }, []);
-    var dataStep2 = Object.keys(mergeStep2).reduce(function(arr, key) {
-        return arr.concat(mergeStep2[key]);
-    }, []);
-    var dataStep3 = Object.keys(mergeStep3).reduce(function(arr, key) {
-        return arr.concat(mergeStep3[key]);
-    }, []);
-    var dataStep4 = Object.keys(mergeStep4).reduce(function(arr, key) {
-        return arr.concat(mergeStep4[key]);
-    }, []);
+    
 
     var dataLength = dataStep1.length
     var step1 = []
