@@ -177,39 +177,15 @@ exports.getAidaContent = async function(req,res){
     var code1 = req.body.code1
     var code2 = req.body.code2
     var code3 = req.body.code3
+    if(req.body.step == "B5"){
+        var step = ["B1", "B2a", "B5"];
+    }else{
+        var step = ["C3", "C4a", "C5"];
+    }
     var parentBrand = [1, 10, 20, 30, 40, 51, 60]
     var childBrand = [[1, 2, 3, 71, 4, 5, 6, 7, 8, 9], [10, 11, 12, 13, 14, 15, 16, 17], [20, 21, 22, 23, 24, 25], [30, 31, 31, 33, 34, 35, 36, 37], [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50], [51, 52, 53, 54, 55], [60, 61, 62, 63]]
     var checkParent = parentBrand.indexOf(parseInt(code1))
-
-    if(checkParent!=-1){
-        var mergeB1 = [];
-        var mergeB2a = [];
-        var mergeB5 = [];
-        for (let i = 0; i < childBrand[0].length; i++) {
-            mergeB1.push(await dataFilterByBreak(pid, "B1", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
-            mergeB2a.push(await dataFilterByBreak(pid, "B2a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
-            mergeB5.push(await dataFilterByBreak(pid, "B5", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
-        }
-        var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
-            return arr.concat(mergeB1[key]);
-        }, []);
-        var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
-            return arr.concat(mergeB2a[key]);
-        }, []);
-        var dataB5 = Object.keys(mergeB5).reduce(function(arr, key) {
-            return arr.concat(mergeB5[key]);
-        }, []);
-    }else{
-        var dataB1 = await dataFilterByBreak(pid, "B1", "A7", break2, break3, code1, code2, code3);
-        var dataB2a = await dataFilterByBreak(pid, "B2a", "A7", break2, break3, code1, code2, code3);
-        var dataB5 = await dataFilterByBreak(pid, "B5", "A7", break2, break3, code1, code2, code3);
-    }
-
-    const getattributeB1 = await getAttributeByQid(pid, "B1");
-    var dataLength = dataB1.length
-    var dataB5Length = dataB5.length
-    const dataC5 = await getData(pid, "C5");
-    const getattribute = await getAttributeByQid(pid, "B5");
+    const getattributeB1 = await getAttributeByQid(pid, step[0]);
     var netting = ["Attention", "Interest", "Desire", "Action", "Total"];
     var resultY = []
     for (let i = 0; i < netting.length; i++) {
@@ -229,6 +205,33 @@ exports.getAidaContent = async function(req,res){
             x: resultYY
         })
     }
+
+    // B5 = B1+B2a
+    if(checkParent!=-1){
+        var mergeB1 = [];
+        var mergeB2a = [];
+        var mergeB5 = [];
+        for (let i = 0; i < childBrand[0].length; i++) {
+            mergeB1.push(await dataFilterByBreak(pid, step[0], "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB2a.push(await dataFilterByBreak(pid, step[1], "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+            mergeB5.push(await dataFilterByBreak(pid, step[2], "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+        }
+        var dataB1 = Object.keys(mergeB1).reduce(function(arr, key) {
+            return arr.concat(mergeB1[key]);
+        }, []);
+        var dataB2a = Object.keys(mergeB2a).reduce(function(arr, key) {
+            return arr.concat(mergeB2a[key]);
+        }, []);
+        var dataB5 = Object.keys(mergeB5).reduce(function(arr, key) {
+            return arr.concat(mergeB5[key]);
+        }, []);
+    }else{
+        var dataB1 = await dataFilterByBreak(pid, step[0], "A7", break2, break3, code1, code2, code3);
+        var dataB2a = await dataFilterByBreak(pid, step[1], "A7", break2, break3, code1, code2, code3);
+        var dataB5 = await dataFilterByBreak(pid, step[2], "A7", break2, break3, code1, code2, code3);
+    }
+    var dataLengthB1 = dataB1.length
+    var dataB5Length = dataB5.length
     for (let x = 0; x < resultY.length; x++) {
         for (let y = 0; y < dataB5.length; y++) {
             for (let z = 0; z < resultY[x].x.length; z++) {
@@ -247,19 +250,16 @@ exports.getAidaContent = async function(req,res){
                         resultY[3].x[z].percent = (resultY[3].x[z].value * 100 / dataB5Length).toFixed(2)
                     }
                     resultY[x].x[z].value = resultY[x].x[z].value+1
-                    resultY[x].x[z].percent = (resultY[x].x[z].value * 100 / dataLength).toFixed(2)
+                    resultY[x].x[z].percent = (resultY[x].x[z].value * 100 / dataLengthB1).toFixed(2)
                 }
             }
         }
     }
-
     for (let i = 0; i < resultY.length; i++) {
         var achievementY = resultY[i].value;
-        var percentY = achievementY * 100 / dataLength
+        var percentY = achievementY * 100 / dataLengthB1
         resultY[i].y = percentY
     }
-
-
     var resultX = []
     for (let i = 0; i < getattributeB1.length; i++) {
         resultX.push({
@@ -269,7 +269,6 @@ exports.getAidaContent = async function(req,res){
             value: 0,
         })
     }
-
     for (let x = 0; x < dataB1.length; x++) {
         for (let y = 0; y < resultX.length; y++) {
             if(dataB1[x].label==resultX[y].label){
@@ -277,7 +276,6 @@ exports.getAidaContent = async function(req,res){
             }
         }
     }
-
     for (let x = 0; x < dataB2a.length; x++) {
         for (let y = 0; y < resultX.length; y++) {
             if(dataB2a[x].label==resultX[y].label){
@@ -285,12 +283,91 @@ exports.getAidaContent = async function(req,res){
             }
         }
     }
-
     for (let z = 0; z < resultX.length; z++) {
         var achievementX = resultX[z].value;
-        var percentX = achievementX * 100 / dataLength
+        var percentX = achievementX * 100 / dataLengthB1
         resultX[z].y = percentX
     }
+    
 
-    res.send([resultY,resultX,dataLength]);
+
+    // C5 = C3 + C4a
+    // if(checkParent!=-1){
+    //     var mergeC3 = [];
+    //     var mergeC4a = [];
+    //     var mergeC5 = [];
+    //     for (let i = 0; i < childBrand[0].length; i++) {
+    //         mergeC3.push(await dataFilterByBreak(pid, "C3", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+    //         mergeC4a.push(await dataFilterByBreak(pid, "C4a", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+    //         mergeC5.push(await dataFilterByBreak(pid, "C5", "A7", break2, break3, childBrand[checkParent][i], code2, code3))
+    //     }
+    //     var dataC3 = Object.keys(mergeC3).reduce(function(arr, key) {
+    //         return arr.concat(mergeC3[key]);
+    //     }, []);
+    //     var dataC4a = Object.keys(mergeC4a).reduce(function(arr, key) {
+    //         return arr.concat(mergeC4a[key]);
+    //     }, []);
+    //     var dataC5 = Object.keys(mergeC5).reduce(function(arr, key) {
+    //         return arr.concat(mergeC5[key]);
+    //     }, []);
+    // }else{
+    //     var dataC3 = await dataFilterByBreak(pid, "C3", "A7", break2, break3, code1, code2, code3);
+    //     var dataC4a = await dataFilterByBreak(pid, "C4a", "A7", break2, break3, code1, code2, code3);
+    //     var dataC5 = await dataFilterByBreak(pid, "C5", "A7", break2, break3, code1, code2, code3);
+    // }
+    // var dataLengthC3 = dataC3.length
+    // var dataC5Length = dataC5.length
+    // for (let x = 0; x < resultY.length; x++) {
+    //     for (let y = 0; y < dataC5.length; y++) {
+    //         for (let z = 0; z < resultY[x].x.length; z++) {
+    //             if(dataC5[y].parentcode==resultY[x].x[z].code){
+    //                 if(dataC5[y].code<=3){
+    //                     resultY[0].x[z].value = resultY[0].x[z].value+1
+    //                     resultY[0].x[z].percent = (resultY[0].x[z].value * 100 / dataC5Length).toFixed(2)
+    //                 }else if(dataC5[y].code>3 && dataC5[y].code<=6){
+    //                     resultY[1].x[z].value = resultY[1].x[z].value+1
+    //                     resultY[1].x[z].percent = (resultY[1].x[z].value * 100 / dataC5Length).toFixed(2)
+    //                 }else if(dataC5[y].code>6 && dataC5[y].code<=8){
+    //                     resultY[2].x[z].value = resultY[2].x[z].value+1
+    //                     resultY[2].x[z].percent = (resultY[2].x[z].value * 100 / dataC5Length).toFixed(2)
+    //                 }else if(dataC5[y].code>8){
+    //                     resultY[3].x[z].value = resultY[3].x[z].value+1
+    //                     resultY[3].x[z].percent = (resultY[3].x[z].value * 100 / dataC5Length).toFixed(2)
+    //                 }
+    //                 resultY[x].x[z].value = resultY[x].x[z].value+1
+    //                 resultY[x].x[z].percent = (resultY[x].x[z].value * 100 / dataLengthC3).toFixed(2)
+    //             }
+    //         }
+    //     }
+    // }
+    // for (let i = 0; i < resultY.length; i++) {
+    //     var achievementY = resultY[i].value;
+    //     var percentY = achievementY * 100 / dataLengthC3
+    //     resultY[i].y = percentY
+    // }
+    // for (let x = 0; x < dataC3.length; x++) {
+    //     for (let y = 0; y < resultX.length; y++) {
+    //         if(dataC3[x].label==resultX[y].label){
+    //             resultX[y].value = resultX[y].value + 1
+    //         }
+    //     }
+    // }
+    // for (let x = 0; x < dataC4a.length; x++) {
+    //     for (let y = 0; y < resultX.length; y++) {
+    //         if(dataC4a[x].label==resultX[y].label){
+    //             resultX[y].value = resultX[y].value + 1
+    //         }
+    //     }
+    // }
+    // for (let z = 0; z < resultX.length; z++) {
+    //     var achievementX = resultX[z].value;
+    //     var percentX = achievementX * 100 / dataLengthC3
+    //     resultX[z].y = percentX
+    // }
+
+    console.log(dataLengthB1)
+    // resultY = data table
+    // resultX = data canvas
+
+    res.send([resultY,resultX,dataLengthB1]);
 }

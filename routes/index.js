@@ -5,7 +5,6 @@ const Router = express.Router();
 Router.get("/", indexController.getIndex);
 Router.post("/decision/content", indexController.getDecisionContent);
 Router.get("/detail/:id", indexController.getDetail);
-Router.get("/total/", indexController.getTotal);
 
 Router.post("/filter", indexController.filterGroup)
 

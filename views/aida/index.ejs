@@ -27,6 +27,13 @@
                     <div class="list-control" style="border-bottom: none;">
                         <div class="list-control-box spc-rl">
                             <span class="size-std">Show By Brand</span><br>
+                            <select name="step" id="step" class="size-std">
+                                <option value="B5">Information search</option>
+                                <option value="C5">Comparisson</option>
+                            </select>
+                        </div>
+                        <div class="list-control-box spc-rl">
+                            <span class="size-std">Show By Brand</span><br>
                             <select name="code1" id="brand" class="size-std">
                                 <option value="all">-- Select Brand --</option>
                                 <% for(var i=0;i<brand.length;i++){ %>
@@ -42,6 +49,9 @@
                                 <option value="S5">Gender</option>
                                 <option value="S6_GRUP">Age</option>
                                 <option value="S16">SES</option>
+                                <option value="S9a">Marital Status</option>
+                                <option value="S7">Occupation</option>
+                                <option value="S8">Education</option>
                             </select>
                         </div>
                         <div class="list-control-box spc-rl">
@@ -58,6 +68,9 @@
                                 <option value="S5" id="S5">Gender</option>
                                 <option value="S6_GRUP" id="S6_GRUP">Age</option>
                                 <option value="S16" id="S16">SES</option>
+                                <option value="S9a" id="S9a">Marital Status</option>
+                                <option value="S7" id="S7">Occupation</option>
+                                <option value="S8" id="S8">Education</option>
                             </select>
                         </div>
                         <div class="list-control-box spc-rl">
@@ -153,11 +166,11 @@
                     return b.percent - a.percent
                 }
                 var html = '<table class="full-tables" style="position: relative; top: -2px;">';
-                for (let i = 0; i < chartData[0].length; i++) {
+                for (let i = 0; i < chartData[0].length-1; i++) {
                     html += '<tr>'
                         html += '<td style="width: 115px;">'+chartData[0][i].label+'</td>'
                         var sorting = chartData[0][i].x.sort(sortValue)
-                        for (let z = 0; z < sorting.length; z++) {
+                        for (let z = 0; z < sorting.length-1; z++) {
                             html += '<td style="width: 100px;">'+sorting[z].percent+'%</td>'
                         }
                     html += '</tr>'
