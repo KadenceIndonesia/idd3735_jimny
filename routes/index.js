@@ -8,4 +8,7 @@ Router.get("/detail/:id", indexController.getDetail);
 
 Router.post("/filter", indexController.filterGroup)
 
+Router.get("/reverse/", indexController.getDecisionReverse);
+Router.post("/reverse/content", indexController.getDecisionReverseContent);
+
 module.exports = Router;

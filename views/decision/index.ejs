@@ -146,6 +146,7 @@
 <script>
     $(".control").on("submit", function(){
         var data = $(".control").serialize();
+        console.log(data);
         $.ajax({
             url: "<%= baseurl() %>decision/content/",
             type: "POST",

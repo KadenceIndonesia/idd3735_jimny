@@ -4,6 +4,7 @@ const fileupload = require("express-fileupload");
 const bodyParser = require("body-parser")
 const ejs = require("ejs")
 const session = require("express-session")
+const mongoose = require("mongoose")
 
 const indexRoutes = require("./routes/index");
 const loginRoutes = require("./routes/login.js");
@@ -12,6 +13,12 @@ global.baseurl = function(){
 	var url = `http://${process.env.HOST}:${process.env.PORT}/`;
     return url;
 }
+mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).catch(error => handleError(error));
+
+
 const app = express();
 app.use(fileupload());
 app.set("view engine", "ejs");

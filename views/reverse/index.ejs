@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Decision Journey</title>
+    <link rel = "icon" href = "https://kadence.com/wp-content/uploads/2020/07/260x260.png" type = "image/x-icon">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<script src="<%= baseurl() %>plugin/flexmonster/theme/green/flexmonster.css"></script>
+    <%- include ('../partials/header') %>
+</head>
+
+<body>
+<div class="wrapper">
+	<div class="lSide">
+		<%- include ('../partials/sidebar') %>
+	</div>
+	<div class="rSide">
+		<div class="head gradientr desk">
+			<%- include ('../partials/topdesk') %>
+		</div>
+		<div class="mainbox size-std column">
+			<div class="title-content size-std">
+				Decision Journey Reverse
+            </div>
+			<div class="top-info column" id="topInfo">
+                
+            </div>
+            <div class="cols-12 containt" style="margin: 20px 0;">
+                <div class="headtitle trans">
+                    <p class="nopad" style="padding: 5px 15px; position: relative;">
+                        Decision Journey Reverse
+                    </p>
+                    <div style="position: absolute; right: 10px;top: 0;">
+                        <img src="<%= baseurl() %>images/icon/download-icon.png" alt="" width="25" onclick="screenshot()">
+                    </div>
+                </div>
+                
+                <div class="decisionContent full-length">
+
+                </div>
+                
+            </div>
+		</div>
+	</div>
+</div>
+</body>
+<%- include ('../partials/footer') %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.js"></script>
+<script>
+    function screenshot(){
+        var wContainer = $("#decisionContent").width();
+        var hContainer = $("#decisionContent").height();
+        var dimention = 1.41;
+        var widthPDF = 595;
+        var heightPDF = widthPDF * dimention;
+        var wImage = wContainer;
+        var hImage = wImage * dimention;
+        var countPage = hContainer / hImage
+        var doc = new jsPDF("p", "pt", "a4");
+        var content = document.getElementById("decisionContent");
+        html2canvas(content,{
+            scale: 2,
+            width: wImage,
+            height: hImage
+        }).then(canvas => {
+            var imgData = canvas.toDataURL('image/jpeg');
+            doc.addPage(widthPDF, heightPDF);
+            doc.setPage(1);
+            doc.addImage(imgData, 'JPEG', 0, 0, widthPDF, heightPDF);
+            doc.save("test.pdf");
+        });
+    }
+</script>
+<script>
+    $(".control").on("submit", function(){
+        var data = $(".control").serialize();
+        console.log(data);
+        $.ajax({
+            url: "<%= baseurl() %>reverse/content/",
+            type: "POST",
+            data: data,
+            cache: true,
+            beforeSend: function(){
+                $(".loader").show()
+            },success: function(chart){
+                $(".loader").hide()
+                $('.decisionContent').html(chart)
+            }
+        })
+        return false;
+    })
+
+    function filterGroup(){
+        var data = $(".control").serialize();
+        $.ajax({
+            url: '<%= baseurl() %>filter',
+            type: "POST",
+            data: data,
+            cache: true,
+            beforeSend: function(load){
+
+            },success: function(result){
+                if($("#break2").val() != "all"){
+                    var html1;
+                    for (let i = 0; i < result[0].length; i++) {
+                        html1 += '<option value="'+result[0][i].code+'">'+result[0][i].label+'</option>'
+                    }
+                    $("#code2").html(html1)
+                    $("#break3 option").show()
+                    $("#"+$("#break2").val()).hide()
+                }
+                if($("#break3").val() != "all"){
+                    var html2;
+                    for (let i = 0; i < result[1].length; i++) {
+                        html2 += '<option value="'+result[1][i].code+'">'+result[1][i].label+'</option>'
+                    }
+                    $("#code3").html(html2)
+                }
+            }
+        })
+    }
+</script>
+</html>
