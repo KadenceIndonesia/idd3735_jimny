@@ -47,15 +47,44 @@ exports.getIndex = async function (req, res) {
     res.redirect("./login");
   }
 };
+
 exports.getDecisionContent = async function (req, res) {
   const attrB1 = await getAttributeByQid(pid, "B1"); // panggil attribut B1
   var data = [];
-
   // filter object
+  const nettingLogic = (netting, i) => {
+    if (netting == "all") {
+      return dataStep1[i].code > 0;
+    } else if (netting == "Online") {
+      return dataStep1[i].code > 18;
+    } else {
+      return dataStep1[i].code <= 18;
+    }
+  };
+  
   var datamatch = function () {
     var target = {};
+    var parentBrand = [1, 10, 20, 30, 40, 51, 60];
+    var childBrand = [
+      [1, 2, 3, 71, 4, 5, 6, 7, 8, 9],
+      [10, 11, 12, 13, 14, 15, 16, 17],
+      [20, 21, 22, 23, 24, 25],
+      [30, 31, 31, 33, 34, 35, 36, 37],
+      [40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50],
+      [51, 52, 53, 54, 55],
+      [60, 61, 62, 63],
+    ];
     if (req.body.code1 != "all") {
-      Object.assign(target, { A7: parseInt(req.body.code1) });
+      var checkParent = parentBrand.indexOf(parseInt(req.body.code1));
+      if (checkParent == -1) {
+        Object.assign(target, { A7: parseInt(req.body.code1) });
+      } else {
+        Object.assign(target, { A7: { $in: childBrand[checkParent] } });
+      }
+    }
+    var netting = [[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,27,28],[19,20,21,22,23,24,25,26,29,30,31,32,33,34,35]];
+    if(req.body.netting!="all"){
+      Object.assign(target, { B1: { $in: netting[parseInt(req.body.netting) - 1] } });
     }
     if (req.body.code2 != "all") {
       Object.assign(target, { [req.body.break2]: parseInt(req.body.code2) });
@@ -65,15 +94,16 @@ exports.getDecisionContent = async function (req, res) {
     }
     return target;
   };
-  var dataSizeFilter = await findMatchByObject(datamatch());
   // filter object
+  var dataSizeFilter = await findMatchByObject(datamatch());
   var findCode = async function (code) {
     return await findObj(attrB1, "code", `${code}`);
   };
-
   var a = datamatch();
   Object.assign(a);
   var result_a = await findMatchByObject(a); //base data
+
+  
 
   // rumus apalah ini gue juga ga paham kenapa bisa jalan
   for (let i = 0; i < result_a.length; i++) {
