@@ -49,21 +49,11 @@
                     <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>">
                         <% for(var x=0;x<step1[i].step2.length;x++){ %>
                         <li class="havesub">
-                            <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>"><%= step1[i].step2[x].label %>(<%= step1[i].step2[x].percent %>%)</p>
+                            <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>"><%= step1[i].step2[x].label %> (<%= step1[i].step2[x].percent %>%)</p>
                             <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>">
                                 <% for(var y=0;y<step1[i].step2[x].step3.length;y++){ %>
                                 <li class="havesub">
-                                    <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>"><%= step1[i].step2[x].step3[y].label %>(<%= step1[i].step2[x].step3[y].percent %>%)</p>
-                                    <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>">
-                                        <% if(step1[i].step2[x].step3[y].step4!=undefined){ %>
-                                        <% for(var z=0;z<step1[i].step2[x].step3[y].step4.length;z++){ %>
-                                        <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>_<%= z+1 %>"><%= step1[i].step2[x].step3[y].step4[z].label %>(<%= step1[i].step2[x].step3[y].step4[z].percent %>%)</p>
-                                            <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>_<%= z+1 %>">
-                                                <li>Purchased</li>
-                                            </ul>
-                                        </li>
-                                        <% }} %>
-                                    </ul>
+                                    <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>"><%= step1[i].step2[x].step3[y].label %> (<%= step1[i].step2[x].step3[y].percent %>%)</p>
                                 </li>
                                 <% } %>
                             </ul>
