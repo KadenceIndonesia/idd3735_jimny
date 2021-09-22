@@ -66,6 +66,7 @@ exports.getIndex = async function (req, res) {
 
 exports.getDecisionContent = async function (req, res) {
   const attrB1 = await getAttributeByQid(pid, "B1"); // panggil attribut B1
+  const attrD1a = await getAttributeByQid(pid, "D1a"); // panggil attribut D1A
   var data = [];
   // filter object
   const nettingLogic = (netting, i) => {
@@ -120,141 +121,118 @@ exports.getDecisionContent = async function (req, res) {
   var findCode = async function (code) {
     return await findObj(attrB1, "code", `${code}`);
   };
+  var findCodeD1a = async function (code) {
+    return await findObj(attrD1a, "code", code);
+  };
+
   var a = datamatch();
   Object.assign(a);
   var result_a = await findMatchByObject(a); //base data
 
   // rumus apalah ini gue juga ga paham kenapa bisa jalan
   for (let i = 0; i < result_a.length; i++) {
-    var findArr = await findObj(data, "code", result_a[i].B1);
-    var step2 = [];
-    for (let x = 0; x < result_a[i].B2a.length; x++) {
-      if ((await findCode(result_a[i].B2a[x])) != -1) {
-        var step4 = [];
-        for (let z = 0; z < result_a[i].C4a.length; z++) {
-          if ((await findCode(result_a[i].C4a[z])) != -1) {
-            step4.push({
-              code: result_a[i].C4a[z],
-              label: attrB1[await findCode(result_a[i].C4a[z])].label,
-              value: 1,
-              percent: 0,
-            });
-          }
-        }
-        step2.push({
-          code: result_a[i].B2a[x],
-          label: attrB1[await findCode(result_a[i].B2a[x])].label,
-          value: 1,
-          percent: 0,
-          step3: [
-            {
-              code: result_a[i].C3,
-              label: attrB1[await findCode(result_a[i].C3)].label,
-              value: 1,
-              percent: 0,
-              step4: step4,
-            },
-          ],
-        });
-      }
-    }
-    if (findArr == -1) {
-      data.push({
-        code: result_a[i].B1,
-        label: attrB1[await findCode(result_a[i].B1)].label,
-        value: 1,
-        percent: 0,
-        step2: step2,
-      });
-    } else {
-      data[findArr].value = data[findArr].value + 1;
-      for (let xx = 0; xx < result_a[i].B2a.length; xx++) {
-        if ((await findCode(result_a[i].B2a[xx])) != -1) {
-          var findArr2 = await findObj(
-            data[findArr].step2,
-            "code",
-            result_a[i].B2a[xx]
-          );
-          if (findArr2 == -1) {
-            var step4 = [];
-            for (let zz = 0; zz < result_a[i].C4a.length; zz++) {
-              if ((await findCode(result_a[i].C4a[zz])) != -1) {
-                step4.push({
-                  code: result_a[i].C4a[zz],
-                  label: attrB1[await findCode(result_a[i].C4a[zz])].label,
+    var tempArrStep1 = [];
+    for (let x = 0; x < result_a[i].step_1.length; x++) {
+      var findObjInStep1 = await findCode(result_a[i].step_1[x]);
+      if (findObjInStep1 != -1) {
+        var findNettingIndexStep1 = await findObj(
+          nettingB1,
+          "label",
+          attrB1[findObjInStep1].netting
+        );
+        var getNettingCodeStep1 = nettingB1[findNettingIndexStep1].code;
+        var findArr = await findObj(data, "code", getNettingCodeStep1);
+        if (tempArrStep1.indexOf(getNettingCodeStep1) == -1) {
+          if (findArr == -1) {
+            var tempArrStep2 = [];
+            var step2 = [];
+            for (let y = 0; y < result_a[i].step_2.length; y++) {
+              var findObjInStep2 = await findCode(result_a[i].step_2[y]);
+              if (findObjInStep2 != -1) {
+                var findNettingIndexStep2 = await findObj(
+                  nettingB1,
+                  "label",
+                  attrB1[findObjInStep2].netting
+                );
+                var getNettingCodeStep2 = nettingB1[findNettingIndexStep2].code;
+                step2.push({
+                  code: getNettingCodeStep2,
+                  label: attrB1[findObjInStep2].netting,
                   value: 1,
                   percent: 0,
+                  step3: [
+                    {
+                      code: result_a[i].D1A,
+                      label: attrD1a[await findCodeD1a(result_a[i].D1A)].label,
+                      value: 1,
+                      percent: 0,
+                    },
+                  ],
                 });
               }
             }
-            data[findArr].step2.push({
-              code: result_a[i].B2a[xx],
-              label: attrB1[await findCode(result_a[i].B2a[xx])].label,
+            tempArrStep1.push(getNettingCodeStep1);
+            data.push({
+              code: getNettingCodeStep1,
+              label: attrB1[findObjInStep1].netting,
               value: 1,
               percent: 0,
-              step3: [
-                {
-                  code: result_a[i].C3,
-                  label: attrB1[await findCode(result_a[i].C3)].label,
-                  value: 1,
-                  percent: 0,
-                  step4: step4,
-                },
-              ],
+              step2: step2,
             });
           } else {
-            data[findArr].step2[findArr2].value =
-              data[findArr].step2[findArr2].value + 1;
-            var findArr3 = await findObj(
-              data[findArr].step2[findArr2].step3,
-              "code",
-              result_a[i].C3
-            );
-            if (findArr3 == -1) {
-              var step4 = [];
-              for (let zzz = 0; zzz < result_a[i].C4a.length; zzz++) {
-                if ((await findCode(result_a[i].C4a[zzz])) != -1) {
-                  step4.push({
-                    code: result_a[i].C4a[zzz],
-                    label: attrB1[await findCode(result_a[i].C4a[zzz])].label,
-                    value: 1,
-                    percent: 0,
-                  });
-                }
-              }
-              data[findArr].step2[findArr2].step3.push({
-                code: result_a[i].C3,
-                label: attrB1[await findCode(result_a[i].C3)].label,
-                value: 1,
-                percent: 0,
-                step4: step4,
-              });
-            } else {
-              data[findArr].step2[findArr2].step3[findArr3].value =
-                data[findArr].step2[findArr2].step3[findArr3].value + 1;
-              var step4 = [];
-              for (let zzzz = 0; zzzz < result_a[i].C4a.length; zzzz++) {
-                if ((await findCode(result_a[i].C4a[zzzz])) != -1) {
-                  var findArr4 = await findObj(
-                    data[findArr].step2[findArr2].step3[findArr3],
-                    "code",
-                    result_a[i].C4a[zzzz]
-                  );
-                  if (findArr4 == -1) {
-                    data[findArr].step2[findArr2].step3[findArr3].step4.push({
-                      code: result_a[i].C4a[zzzz],
-                      label:
-                        attrB1[await findCode(result_a[i].C4a[zzzz])].label,
+            data[findArr].value++;
+            var tempArrStep2 = [];
+            for (let y = 0; y < result_a[i].step_2.length; y++) {
+              var findObjInStep2 = await findCode(result_a[i].step_2[y]);
+              if (findObjInStep2 != -1) {
+                var findNettingIndexStep2 = await findObj(
+                  nettingB1,
+                  "label",
+                  attrB1[findObjInStep2].netting
+                );
+                var getNettingCodeStep2 = nettingB1[findNettingIndexStep2].code;
+                var findArrStep2 = await findObj(
+                  data[findArr].step2,
+                  "code",
+                  getNettingCodeStep2
+                );
+                if (tempArrStep2.indexOf(getNettingCodeStep2) == -1) {
+                  if (findArrStep2 == -1) {
+                    tempArrStep2.push(getNettingCodeStep2);
+                    data[findArr].step2.push({
+                      code: getNettingCodeStep2,
+                      label: attrB1[findObjInStep2].netting,
                       value: 1,
                       percent: 0,
+                      step3: [
+                        {
+                          code: result_a[i].D1A,
+                          label:
+                            attrD1a[await findCodeD1a(result_a[i].D1A)].label,
+                          value: 1,
+                          percent: 0,
+                        },
+                      ],
                     });
                   } else {
-                    data[findArr].step2[findArr2].step3[findArr3].step4[
-                      findArr4
-                    ] =
-                      data[findArr].step2[findArr2].step3[findArr3].step4[
-                        findArr4
-                      ] + 1;
+                    data[findArr].step2[findArrStep2].value++;
+                    var findArrStep3 = await findObj(
+                      data[findArr].step2[findArrStep2].step3,
+                      "code",
+                      result_a[i].D1A
+                    );
+                    if (findArrStep3 == -1) {
+                      data[findArr].step2[findArrStep2].step3.push({
+                        code: result_a[i].D1A,
+                        label:
+                          attrD1a[await findCodeD1a(result_a[i].D1A)].label,
+                        value: 1,
+                        percent: 0,
+                      });
+                    } else {
+                      data[findArr].step2[findArrStep2].step3[findArrStep3]
+                        .value++;
+                    }
                   }
                 }
               }
@@ -263,51 +241,45 @@ exports.getDecisionContent = async function (req, res) {
         }
       }
     }
+  }
 
-    for (let i = 0; i < data.length; i++) {
-      data[i].percent = ((data[i].value / dataSizeFilter.length) * 100).toFixed(
-        2
-      );
-      var lengthstep2 = data[i].step2.reduce(function (prev, cur) {
+  // console.log(data)
+  var lengthstep1 = data.reduce(function (prev, cur) {
+    return prev + cur.value;
+  }, 0);
+  for (let i = 0; i < data.length; i++) {
+    data[i].percent = ((data[i].value / lengthstep1) * 100).toFixed(2);
+    var lengthstep2 = data[i].step2.reduce(function (prev, cur) {
+      return prev + cur.value;
+    }, 0);
+    for (let x = 0; x < data[i].step2.length; x++) {
+      data[i].step2[x].percent = (
+        (data[i].step2[x].value / lengthstep2) *
+        100
+      ).toFixed(2);
+      var lengthstep3 = data[i].step2[x].step3.reduce(function (prev, cur) {
         return prev + cur.value;
       }, 0);
-      for (let x = 0; x < data[i].step2.length; x++) {
-        data[i].step2[x].percent = (
-          (data[i].step2[x].value / lengthstep2) *
+      for (let y = 0; y < data[i].step2[x].step3.length; y++) {
+        data[i].step2[x].step3[y].percent = (
+          (data[i].step2[x].step3[y].value / lengthstep3) *
           100
         ).toFixed(2);
-        var lengthstep3 = data[i].step2[x].step3.reduce(function (prev, cur) {
-          return prev + cur.value;
-        }, 0);
-        for (let y = 0; y < data[i].step2[x].step3.length; y++) {
-          data[i].step2[x].step3[y].percent = (
-            (data[i].step2[x].step3[y].value / lengthstep3) *
-            100
-          ).toFixed(2);
-          if (data[i].step2[x].step3[y].step4 != undefined) {
-            var lengthstep4 = data[i].step2[x].step3[y].step4.reduce(function (
-              prev,
-              cur
-            ) {
-              return prev + cur.value;
-            },
-            0);
-            for (let z = 0; z < data[i].step2[x].step3[y].step4.length; z++) {
-              data[i].step2[x].step3[y].step4[z].percent = (
-                (data[i].step2[x].step3[y].step4[z].value / lengthstep4) *
-                100
-              ).toFixed(2);
-            }
-          }
-        }
       }
     }
   }
   // rumus apalah ini gue juga ga paham kenapa bisa jalan
 
+  // sorting
+  data.sort((a, b) => (a.value < b.value) ? 1 : -1)
+  for (let i = 0; i < data.length; i++) {
+    data[i].step2.sort((a, b) => (a.value < b.value) ? 1 : -1)  
+  }
+
   res.render("decision/content", {
     step1: data,
   });
+  // res.send(data);
 };
 
 exports.getDetail = async function (req, res) {
@@ -520,7 +492,10 @@ exports.getDecisionReverseContent = async function (req, res) {
                 "label",
                 nettingB1[findNettingIndexStep3].label
               );
-              if (tempArrStep3.indexOf(nettingB1[findNettingIndexStep3].code) == -1) {
+              if (
+                tempArrStep3.indexOf(nettingB1[findNettingIndexStep3].code) ==
+                -1
+              ) {
                 tempArrStep3.push(nettingB1[findNettingIndexStep3].code);
                 if (findObjInStep3 == -1) {
                   data[0].step2[findObjInStep2].step3.push({
@@ -556,25 +531,19 @@ exports.getDecisionReverseContent = async function (req, res) {
           (data[i].step2[x].step3[y].value / data[i].step2[x].value) *
           data[i].step2[x].percent
         ).toFixed(2);
-        if (data[i].step2[x].step3[y].step4 != undefined) {
-          var lengthstep4 = data[i].step2[x].step3[y].step4.reduce(function (
-            prev,
-            cur
-          ) {
-            return prev + cur.value;
-          },
-          0);
-          for (let z = 0; z < data[i].step2[x].step3[y].step4.length; z++) {
-            data[i].step2[x].step3[y].step4[z].percent = (
-              (data[i].step2[x].step3[y].step4[z].value / lengthstep4) *
-              100
-            ).toFixed(2);
-          }
-        }
       }
     }
   }
   // rumus apalah ini gue juga ga paham kenapa bisa jalan
+
+  // sorting
+  data.sort((a, b) => (a.value < b.value) ? 1 : -1)
+  for (let i = 0; i < data.length; i++) {
+    data[i].step2.sort((a, b) => (a.value < b.value) ? 1 : -1)
+    for (let x = 0; x < data[i].step2.length; x++) {
+      data[i].step2[x].step3.sort((a, b) => (a.value < b.value) ? 1 : -1)
+    }
+  }
 
   res.render("reverse/content", {
     step1: data,
