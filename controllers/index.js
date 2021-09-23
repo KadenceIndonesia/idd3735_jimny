@@ -99,15 +99,15 @@ exports.getDecisionContent = async function (req, res) {
         Object.assign(target, { A7: { $in: childBrand[checkParent] } });
       }
     }
-    var netting = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 27, 28],
-      [19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 35],
-    ];
-    if (req.body.netting != "all") {
-      Object.assign(target, {
-        B1: { $in: netting[parseInt(req.body.netting) - 1] },
-      });
-    }
+    // var netting = [
+    //   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 27, 28],
+    //   [19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 35],
+    // ];
+    // if (req.body.netting != "all") {
+    //   Object.assign(target, {
+    //     B1: { $in: netting[parseInt(req.body.netting) - 1] },
+    //   });
+    // }
     if (req.body.code2 != "all") {
       Object.assign(target, { [req.body.break2]: parseInt(req.body.code2) });
     }
@@ -390,15 +390,15 @@ exports.getDecisionReverseContent = async function (req, res) {
         Object.assign(target, { A7: { $in: childBrand[checkParent] } });
       }
     }
-    var netting = [
-      [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 27, 28],
-      [19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 35],
-    ];
-    if (req.body.netting != "all") {
-      Object.assign(target, {
-        B1: { $in: netting[parseInt(req.body.netting) - 1] },
-      });
-    }
+    // var netting = [
+    //   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 27, 28],
+    //   [19, 20, 21, 22, 23, 24, 25, 26, 29, 30, 31, 32, 33, 34, 35],
+    // ];
+    // if (req.body.netting != "all") {
+    //   Object.assign(target, {
+    //     B1: { $in: netting[parseInt(req.body.netting) - 1] },
+    //   });
+    // }
     if (req.body.code2 != "all") {
       Object.assign(target, { [req.body.break2]: parseInt(req.body.code2) });
     }
