@@ -160,12 +160,16 @@ exports.getDecisionContent = async function (req, res) {
                   label: attrB1[findObjInStep2].netting,
                   value: 1,
                   percent: 0,
+                  duration: result_a[i].C4b,
+                  average: 0,
                   step3: [
                     {
                       code: result_a[i].D1A,
                       label: attrD1a[await findCodeD1a(result_a[i].D1A)].label,
                       value: 1,
                       percent: 0,
+                      duration: result_a[i].D4,
+                      average: 0
                     },
                   ],
                 });
@@ -177,10 +181,13 @@ exports.getDecisionContent = async function (req, res) {
               label: attrB1[findObjInStep1].netting,
               value: 1,
               percent: 0,
+              duration: result_a[i].B2b,
+              average: 0,
               step2: step2,
             });
           } else {
             data[findArr].value++;
+            data[findArr].duration = data[findArr].duration + result_a[i].B2b;
             var tempArrStep2 = [];
             for (let y = 0; y < result_a[i].step_2.length; y++) {
               var findObjInStep2 = await findCode(result_a[i].step_2[y]);
@@ -204,6 +211,8 @@ exports.getDecisionContent = async function (req, res) {
                       label: attrB1[findObjInStep2].netting,
                       value: 1,
                       percent: 0,
+                      duration: result_a[i].C4b,
+                      average: 0,
                       step3: [
                         {
                           code: result_a[i].D1A,
@@ -211,11 +220,14 @@ exports.getDecisionContent = async function (req, res) {
                             attrD1a[await findCodeD1a(result_a[i].D1A)].label,
                           value: 1,
                           percent: 0,
+                          duration: result_a[i].D4,
+                          average: 0
                         },
                       ],
                     });
                   } else {
                     data[findArr].step2[findArrStep2].value++;
+                    data[findArr].step2[findArrStep2].duration = data[findArr].step2[findArrStep2].duration + result_a[i].C4b;
                     var findArrStep3 = await findObj(
                       data[findArr].step2[findArrStep2].step3,
                       "code",
@@ -228,10 +240,13 @@ exports.getDecisionContent = async function (req, res) {
                           attrD1a[await findCodeD1a(result_a[i].D1A)].label,
                         value: 1,
                         percent: 0,
+                        duration: result_a[i].D4,
+                        average: 0
                       });
                     } else {
                       data[findArr].step2[findArrStep2].step3[findArrStep3]
                         .value++;
+                        data[findArr].step2[findArrStep2].step3[findArrStep3].duration = data[findArr].step2[findArrStep2].step3[findArrStep3].duration + result_a[i].D4;
                     }
                   }
                 }
@@ -243,12 +258,12 @@ exports.getDecisionContent = async function (req, res) {
     }
   }
 
-  // console.log(data)
   var lengthstep1 = data.reduce(function (prev, cur) {
     return prev + cur.value;
   }, 0);
   for (let i = 0; i < data.length; i++) {
     data[i].percent = ((data[i].value / lengthstep1) * 100).toFixed(2);
+    data[i].average = (data[i].duration / data[i].value).toFixed(0);
     var lengthstep2 = data[i].step2.reduce(function (prev, cur) {
       return prev + cur.value;
     }, 0);
@@ -257,6 +272,7 @@ exports.getDecisionContent = async function (req, res) {
         (data[i].step2[x].value / lengthstep2) *
         100
       ).toFixed(2);
+      data[i].step2[x].average = (data[i].step2[x].duration / data[i].step2[x].value).toFixed(0);
       var lengthstep3 = data[i].step2[x].step3.reduce(function (prev, cur) {
         return prev + cur.value;
       }, 0);
@@ -265,6 +281,7 @@ exports.getDecisionContent = async function (req, res) {
           (data[i].step2[x].step3[y].value / lengthstep3) *
           100
         ).toFixed(2);
+        data[i].step2[x].step3[y].average = (data[i].step2[x].step3[y].duration / data[i].step2[x].step3[y].value).toFixed(0);
       }
     }
   }
@@ -424,10 +441,13 @@ exports.getDecisionReverseContent = async function (req, res) {
         label: attrD1a[await findCodeD1a(result_a[i].D1A)].label,
         value: 1,
         percent: 0,
-        step2: step2,
+        duration: result_a[i].D4,
+        average: 0,
+        step2: step2
       });
     } else {
       data[findArr].value = data[findArr].value + 1;
+      data[findArr].duration = data[findArr].duration + result_a[i].D4;
       var step2 = [];
       var tempArrStep2 = [];
       for (let xx = 0; xx < result_a[i].step_2.length; xx++) {
@@ -521,6 +541,7 @@ exports.getDecisionReverseContent = async function (req, res) {
     data[i].percent = ((data[i].value / dataSizeFilter.length) * 100).toFixed(
       2
     );
+    data[i].average = (data[i].duration / data[i].value).toFixed(0);
     for (let x = 0; x < data[i].step2.length; x++) {
       data[i].step2[x].percent = (
         (data[i].step2[x].value / data[i].value) *

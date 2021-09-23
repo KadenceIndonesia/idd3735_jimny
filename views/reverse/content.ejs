@@ -1,7 +1,7 @@
 <style>
     .accordionTree{
         position: relative;
-        width: 20%;
+        width: 25%;
         background-color: #68BAF9;
         color: #ffffff;
     }
@@ -43,16 +43,16 @@
 </div>
 <div class="full-length pad-tb" style="float: left;">
     <ul style="float: left; width: 100%;" class="nopad size-head4">
-        <li style="float: left; width: 20%; margin-right: 3%;"><b>&nbsp;</b></li>
-        <li style="float: left; width: 20%; margin-right: 3%;"><b>Comparisson</b></li>
-        <li style="float: left; width: 20%; margin-right: 3%;"><b>Information search</b></li>
+        <li style="float: left; width: 25%; margin-right: 50px;"><b>&nbsp;</b></li>
+        <li style="float: left; width: 25%; margin-right: 50px;"><b>Comparisson</b></li>
+        <li style="float: left; width: 25%; margin-right: 50px;"><b>Information search</b></li>
     </ul>
 </div>
 <div class="full-length" id="decisionContent" style="height: auto; background-color: #ececec; border: 1px solid #68baf9; position: relative; overflow: hidden;">
     <ul class="nopad accordionTree">
         <% for(var i=0;i<step1.length;i++){ %>
             <% if(step1[i].value > 0){ %>
-                <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>"><%= step1[i].label %> (<%= step1[i].percent %>%)</p>
+                <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>"><%= step1[i].label %> (<%= step1[i].percent %>%) <b style="float: right;"><%= step1[i].average %> Hari</b></p>
                     <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>">
                         <% for(var x=0;x<step1[i].step2.length;x++){ %>
                         <li class="havesub">

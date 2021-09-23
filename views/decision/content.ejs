@@ -1,7 +1,7 @@
 <style>
     .accordionTree{
         position: relative;
-        width: 20%;
+        width: 25%;
         background-color: #68BAF9;
         color: #ffffff;
     }
@@ -43,8 +43,8 @@
 </div>
 <div class="full-length pad-tb" style="float: left;">
     <ul style="float: left; width: 100%;" class="nopad size-head4">
-        <li style="float: left; width: 20%; margin-right: 3%;"><b>Information search</b></li>
-        <li style="float: left; width: 20%; margin-right: 3%;"><b>Comparisson</b></li>
+        <li style="float: left; width: 25%; margin-right: 50px;"><b>Information search</b></li>
+        <li style="float: left; width: 25%; margin-right: 50px;"><b>Comparisson</b></li>
     </ul>
 </div>
 
@@ -52,15 +52,15 @@
     <ul class="nopad accordionTree">
         <% for(var i=0;i<step1.length;i++){ %>
             <% if(step1[i].value > 0){ %>
-                <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>"><%= step1[i].label %> (<%= step1[i].percent %>%)</p>
+                <li class="havesub"><p class="nopad accord2" href="#kat<%= i+1 %>"><%= step1[i].label %> (<%= step1[i].percent %>%) <b style="float: right;"><%= step1[i].average %> Hari</b></p>
                     <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>">
                         <% for(var x=0;x<step1[i].step2.length;x++){ %>
                         <li class="havesub">
-                            <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>"><%= step1[i].step2[x].label %>(<%= step1[i].step2[x].percent %>%)</p>
+                            <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>"><%= step1[i].step2[x].label %> (<%= step1[i].step2[x].percent %>%) <b style="float: right;"><%= step1[i].step2[x].average %> Hari</b></p>
                             <ul class="accordionSubTree submenu size-std" id="kat<%= i+1 %>_<%= x+1 %>">
                                 <% for(var y=0;y<step1[i].step2[x].step3.length;y++){ %>
                                 <li class="havesub">
-                                    <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>"><%= step1[i].step2[x].step3[y].label %>(<%= step1[i].step2[x].step3[y].percent %>%)</p>
+                                    <p class="nopad accord2" href="#kat<%= i+1 %>_<%= x+1 %>_<%= y+1 %>"><%= step1[i].step2[x].step3[y].label %> (<%= step1[i].step2[x].step3[y].percent %>%) <b style="float: right;"><%= step1[i].step2[x].step3[y].average %> Hari</b></p>
                                 </li>
                                 <% } %>
                             </ul>

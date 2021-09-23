@@ -365,7 +365,6 @@ exports.getAidaContent = async function(req,res){
     //     resultX[z].y = percentX
     // }
 
-    console.log(dataLengthB1)
     // resultY = data table
     // resultX = data canvas
 
